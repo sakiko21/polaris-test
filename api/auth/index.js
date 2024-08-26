@@ -1,0 +1,1 @@
+export {adminRegister} from "./admin-register.js"
