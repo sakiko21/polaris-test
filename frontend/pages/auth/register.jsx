@@ -1,4 +1,5 @@
 import{Card, Form, FormLayout, Page, Text, TextField, Button} from "@shopify/polaris"
+import {useNavigate} from "react-router-dom";  // useNavigateをインポート
 import {useState} from "react";
 //ステート管理をまとめて行うもの。
 import {useField, useForm} from "@shopify/react-form";
@@ -7,7 +8,9 @@ export default function RegisterPage(){
     // const [nameValue, setNameValue] = useState("");
     // const [nameErrorMessage, setNameErrorMessage] = useState("お名前を入力してください");
    //name, email, password, passwordConfirmation のフォームを作成する
-const {
+   const navigate = useNavigate(); // navigateを使用できるようにする
+
+   const {
     fields: {name, email, password, passwordConfirmation},
     dirty,//変更されたらtrue(何か一つでも変更された時によく使うやつ)
     submit,//submitをするとsubmittingがtrueになる
@@ -75,6 +78,25 @@ const {
         }),
     },
     async onSubmit(formDetails){
+        // console.log('onSubmit called with:', formDetails); // これを追加
+        // try{
+        //     console.log('Before fetch'); // fetch の前に追加
+        //     delete formDetails.passwordConfirmation;
+        //     const streamData = await fetch('/api/auth/register',{
+        //         method:'POST',
+        //         headers:{
+        //             'Content-Type': 'application/json',
+        //         },
+        //         body:JSON.stringify(formDetails),
+        //     });
+        //     console.log('After fetch'); // fetch の後に追加
+        //     console.log({streamData});
+        //     const response = await streamData.json();
+        //     console.log({response});
+        // }catch(error){
+            
+        //     console.error(error);
+        // }
         delete formDetails.passwordConfirmation;
         const streamData = await fetch('/api/auth/register',{
             method:'POST',
@@ -84,7 +106,15 @@ const {
             body:JSON.stringify(formDetails),
         });
         const response = await streamData.json();
-        console.log(response);
+        console.log({response});
+        if(response.register == 'success'){
+            alert('登録完了');
+            navigate('/auth/mypage');  // 登録完了後にマイページへ遷移
+            return {status: 'success'};
+        }else{
+            alert('登録が失敗しました');
+            return {status: 'fail', message:error.message};
+        }
     },
 });
    
@@ -114,7 +144,7 @@ const {
                     />
                     <TextField
                         label="パスワード"
-                        type="pasword"
+                        type="password"
                         requiredIndicator
                         value={password.value}
                         onChange={password.onChange}

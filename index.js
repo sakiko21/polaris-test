@@ -4,13 +4,18 @@ import {join} from 'path';//ファイルとパスを結合するため、pathモ
 import serveStatic from 'serve-static';//静的ファイルを提供するためのミドルウェア
 import { readFileSync } from 'fs';//fsモジュールから、ファイルを同期的に読み込むためのメソッドをインポート
 import { apiRouter } from './routes/index.js';
+import { PolarisPracDB } from './db/polaris-test-db.js';
+import cookieParser from 'cookie-parser';
 
 //Expressアプリケーション設定
 const app = express();
 const PORT = process.env.PORT || 8080;
 const STATIC_PATH = `${process.cwd()}/frontend/dist`;// 静的ファイルを提供するディレクトリのパスを指定。
 
+PolarisPracDB.init();
+
 app.use(express.json());
+app.use(cookieParser());
 apiRouter(app);
 
 
@@ -32,3 +37,4 @@ app.use("/*", async (req,res,next) => {//指定されたルートが存在しな
 app.listen(PORT, () =>{
     console.log(`Polaris app ：http://localhost:${PORT}`);
 })
+
